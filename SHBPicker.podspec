@@ -18,8 +18,7 @@ s.source       = { :git => "https://github.com/jiutianhuanpei/SHBPicker.git", :t
 
 s.source_files = 'SHBPicker/*.{h,m}'
 
-s.framework    = 'UIKit'
-s.framework    = 'Photos'
+s.framework    = 'UIKit', 'Photos', 'Foundation'
 s.requires_arc = true
 s.ios.deployment_target = "8.1"
 end
