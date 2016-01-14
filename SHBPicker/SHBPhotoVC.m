@@ -7,7 +7,7 @@
 //
 
 #import "SHBPhotoVC.h"
-#import "UIView+Helps.h"
+#import "UIView+SendAction.h"
 #import "SHBBrowserController.h"
 
 static CGFloat space = 2;
@@ -15,9 +15,19 @@ static NSInteger columNum = 4;
 
 static CGFloat btnWidth = 20;
 
+@protocol SHBItemDelegate <NSObject>
+
+- (void)clickedRightBtn:(id)sender;
+- (void)lookBigImage:(id)sender;
+
+@end
+
+
 @interface SHBItemCell : UICollectionViewCell
 
 - (void)configImage:(UIImage *)image;
+
+@property (nonatomic, assign) id<SHBItemDelegate> delegate;
 
 @end
 @implementation SHBItemCell {
@@ -50,13 +60,17 @@ static CGFloat btnWidth = 20;
 }
 
 - (void)clickedBtn {
-    SEL action = @selector(kkkBtn:);
-    
-    [self shbSendAction:action from:self];
+    if ([_delegate respondsToSelector:@selector(clickedRightBtn:)]) {
+        [_delegate clickedRightBtn:self];
+    }
+//    [self shbSendAction:@selector(kkkBtn:) from:self];
 }
 
 - (void)tap {
-    [self shbSendAction:@selector(lookBigImage:) from:self];
+    if ([_delegate respondsToSelector:@selector(lookBigImage:)]) {
+        [_delegate lookBigImage:self];
+    }
+//    [self shbSendAction:@selector(lookBigImage:) from:self];
 }
 
 - (void)configImage:(UIImage *)image {
@@ -71,7 +85,7 @@ static CGFloat btnWidth = 20;
 @end
 
 
-@interface SHBPhotoVC ()<UICollectionViewDelegate, UICollectionViewDataSource, PHPhotoLibraryChangeObserver>
+@interface SHBPhotoVC ()<UICollectionViewDelegate, UICollectionViewDataSource, PHPhotoLibraryChangeObserver, SHBItemDelegate>
 
 @end
 
@@ -173,9 +187,12 @@ static CGFloat btnWidth = 20;
     [_view registerClass:[SHBItemCell class] forCellWithReuseIdentifier:NSStringFromClass([SHBItemCell class])];
     // 权限
     __weak typeof(self) SHB = self;
+    
+    
     [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
         if (status == PHAuthorizationStatusAuthorized) {
             [SHB fetchData];
+            
         }
     }];
     
@@ -226,7 +243,7 @@ static CGFloat btnWidth = 20;
 #pragma mark - UICollectionViewDelegate && UICollectionViewDataSource
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     SHBItemCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([SHBItemCell class]) forIndexPath:indexPath];
-    
+    cell.delegate = self;
     PHAsset *asset = [_fetchResult objectAtIndex:indexPath.row];
     [_manager requestImageForAsset:asset targetSize:_itemSize contentMode:PHImageContentModeDefault options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
         [cell configImage:result];        
@@ -240,7 +257,8 @@ static CGFloat btnWidth = 20;
 }
 
 #pragma mark - 引出
-- (void)kkkBtn:(SHBItemCell *)sender {
+
+- (void)clickedRightBtn:(SHBItemCell *)sender {
     NSIndexPath *indexPath = [_view indexPathForCell:sender];
     if (sender.isSelected) {
         [_view deselectItemAtIndexPath:indexPath animated:true];
@@ -257,6 +275,24 @@ static CGFloat btnWidth = 20;
         [_view selectItemAtIndexPath:indexPath animated:true scrollPosition:UICollectionViewScrollPositionNone];
     }
 }
+
+//- (void)kkkBtn:(SHBItemCell *)sender {
+//    NSIndexPath *indexPath = [_view indexPathForCell:sender];
+//    if (sender.isSelected) {
+//        [_view deselectItemAtIndexPath:indexPath animated:true];
+//    } else {
+//        [_view selectItemAtIndexPath:indexPath animated:true scrollPosition:UICollectionViewScrollPositionNone];
+//    }
+//}
+//
+//- (void)lookBigImage:(SHBItemCell *)cell {
+//    NSIndexPath *indexPath = [_view indexPathForCell:cell];
+//    if (cell.selected) {
+//        [_view deselectItemAtIndexPath:indexPath animated:true];
+//    } else {
+//        [_view selectItemAtIndexPath:indexPath animated:true scrollPosition:UICollectionViewScrollPositionNone];
+//    }
+//}
 
 #pragma mark - UICollectionViewDelegateFlowLayout
 //- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {

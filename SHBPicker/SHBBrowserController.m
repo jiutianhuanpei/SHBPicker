@@ -11,12 +11,20 @@
 
 #import "SHBBrowserController.h"
 #import <Photos/Photos.h>
-#import "UIView+Helps.h"
+#import "UIView+SendAction.h"
+
+@protocol SHBPhotoItemDelegate <NSObject>
+
+- (void)saveImage:(UIImageView *)imgView;
+
+@end
 
 @interface SHBPhotoItem : UICollectionViewCell<UIScrollViewDelegate>
 
-@property (nonatomic) SEL   singleTap;
-@property (nonatomic) SEL   doubleTap;
+//@property (nonatomic) SEL   singleTap;
+//@property (nonatomic) SEL   doubleTap;
+
+@property (nonatomic, assign) id<SHBPhotoItemDelegate> delegate;
 
 - (void)configImage:(UIImage *)image;
 - (void)nomalScale;
@@ -67,18 +75,21 @@
 
 - (void)longPress:(UILongPressGestureRecognizer *)press {
     if (press.state == UIGestureRecognizerStateBegan) {
-        [self shbSendAction:@selector(saveImage:) from:_imgView];
+        if ([_delegate respondsToSelector:@selector(saveImage:)]) {
+            [_delegate saveImage:_imgView];
+        }
+//        [self shbSendAction:@selector(saveImage:) from:_imgView];
     }
 }
 
 - (void)tap:(UITapGestureRecognizer *)tap {
     _scroll.backgroundColor = [UIColor whiteColor];
-    [self shbSendAction:_singleTap from:self];
+//    [self shbSendAction:_singleTap from:_imgView];
 }
 
 - (void)doubleTap:(UITapGestureRecognizer *)tap {
     _scroll.backgroundColor = [UIColor blackColor];
-    [self shbSendAction:_doubleTap from:self];
+//    [self shbSendAction:_doubleTap from:self];
 }
 
 - (void)configImage:(UIImage *)image {
@@ -128,7 +139,7 @@
 }
 @end
 
-@interface SHBBrowserController ()<UICollectionViewDelegate, UICollectionViewDataSource>
+@interface SHBBrowserController ()<UICollectionViewDelegate, UICollectionViewDataSource, SHBPhotoItemDelegate>
 
 @property (nonatomic, strong) PHCachingImageManager *manager;
 
@@ -184,8 +195,7 @@
 #pragma mark - UICollectionViewDelegate, UICollectionViewDataSource
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     SHBPhotoItem *item = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([SHBPhotoItem class]) forIndexPath:indexPath];
-    item.singleTap = @selector(singleTTap);
-    item.doubleTap = @selector(doubleTapp);
+    item.delegate = self;
     PHAsset *asset = _model[indexPath.row];
     [_manager requestImageForAsset:asset targetSize:item.bounds.size contentMode:PHImageContentModeDefault options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
         [item configImage:result];
@@ -194,13 +204,6 @@
     return item;
 }
 
-- (void)doubleTapp {
-    NSLog(@"2");
-}
-
-- (void)singleTTap {
-    NSLog(@"1");
-}
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     NSArray *array = _model;
