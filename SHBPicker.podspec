@@ -9,7 +9,7 @@ s.description  = <<-DESC
 DESC
 
 s.homepage     = "https://github.com/jiutianhuanpei/SHBPicker.git"
-
+s.license          = 'MIT'
 
 
 s.author   = { "jiutianhuanpei" => "shenhongbang@163.com" }
