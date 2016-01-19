@@ -18,11 +18,9 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/jiutianhuanpei/SHBPicker.git", :tag => s.version.to_s }
 
-  s.source_files = 'SHBPicker/*.{h,m}'
+  s.source_files = 'SHBPicker/SHBPicker/*.{h,m}'
 
-    s.resources = 'SHBPicker/*.{png}'
-
-#s.framework    = 'AVFoundation', 'AudioToolbox', 'MediaPlayer'
+    s.resources = 'SHBPicker/SHBPicker/*.{png}'
 
   s.requires_arc = true
 
