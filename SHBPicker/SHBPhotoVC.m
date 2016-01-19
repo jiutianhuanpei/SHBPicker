@@ -63,14 +63,12 @@ static CGFloat btnWidth = 20;
     if ([_delegate respondsToSelector:@selector(clickedRightBtn:)]) {
         [_delegate clickedRightBtn:self];
     }
-//    [self shbSendAction:@selector(kkkBtn:) from:self];
 }
 
 - (void)tap {
     if ([_delegate respondsToSelector:@selector(lookBigImage:)]) {
         [_delegate lookBigImage:self];
     }
-//    [self shbSendAction:@selector(lookBigImage:) from:self];
 }
 
 - (void)configImage:(UIImage *)image {
@@ -276,30 +274,7 @@ static CGFloat btnWidth = 20;
     }
 }
 
-//- (void)kkkBtn:(SHBItemCell *)sender {
-//    NSIndexPath *indexPath = [_view indexPathForCell:sender];
-//    if (sender.isSelected) {
-//        [_view deselectItemAtIndexPath:indexPath animated:true];
-//    } else {
-//        [_view selectItemAtIndexPath:indexPath animated:true scrollPosition:UICollectionViewScrollPositionNone];
-//    }
-//}
-//
-//- (void)lookBigImage:(SHBItemCell *)cell {
-//    NSIndexPath *indexPath = [_view indexPathForCell:cell];
-//    if (cell.selected) {
-//        [_view deselectItemAtIndexPath:indexPath animated:true];
-//    } else {
-//        [_view selectItemAtIndexPath:indexPath animated:true scrollPosition:UICollectionViewScrollPositionNone];
-//    }
-//}
-
 #pragma mark - UICollectionViewDelegateFlowLayout
-//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-//
-//    return _itemSize;
-//}
-
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
     return space;
 }
